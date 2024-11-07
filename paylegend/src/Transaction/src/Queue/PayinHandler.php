@@ -22,8 +22,6 @@ class PayinHandler
         $jsonReceiver = json_decode($notify->getContent(), true);
         dd($jsonReceiver, 'test do handler');
 
-        
-
 
     }
 }
