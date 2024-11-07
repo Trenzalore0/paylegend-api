@@ -21,4 +21,4 @@ jobs:
         SERVER_IP: "174.138.86.195"
         USERNAME: "root"
         LOCAL_DIR: "./"
-        REMOTE_DIR: "/var/www/seu-projeto"
+        REMOTE_DIR: "/root/paylegend"
