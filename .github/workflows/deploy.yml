@@ -3,7 +3,7 @@ name: Deploy to Droplet
 on:
   push:
     branches:
-      - main
+      - master
 
 jobs:
   deploy:
@@ -18,7 +18,7 @@ jobs:
       env:
         DEPLOY_KEY: ${{ secrets.DEPLOY_KEY }}
         ARGS: "-avz --delete"
-        SERVER_IP: "IP_DA_DROPLET"
+        SERVER_IP: "174.138.86.195"
         USERNAME: "root"
         LOCAL_DIR: "./"
         REMOTE_DIR: "/var/www/seu-projeto"
