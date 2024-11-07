@@ -1,24 +1,27 @@
-name: Deploy to Droplet
+name: Deploy to DigitalOcean Droplet
 
 on:
   push:
     branches:
-      - master
+      - master  # Ou a branch que deseja usar para o deploy automático
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout the code
-      uses: actions/checkout@v3
+      - name: Checkout Code
+        uses: actions/checkout@v3
 
-    - name: Sync files to Droplet
-      uses: burnett01/rsync-deployments@5.1
-      env:
-        DEPLOY_KEY: ${{ secrets.DEPLOY_KEY }}
-        ARGS: "-avz --delete"
-        SERVER_IP: "174.138.86.195"
-        USERNAME: "root"
-        LOCAL_DIR: "./"
-        REMOTE_DIR: "/root/paylegend"
+      - name: Deploy to Droplet via SSH
+        uses: appleboy/ssh-action@v0.1.9
+        with:
+          host: ${{ secrets.SERVER_IP }}  # Adicione o IP da Droplet em Settings > Secrets
+          username: ${{ secrets.USERNAME }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          port: 22
+          script: |
+            # Comandos de deploy, como copiar arquivos ou atualizar dependências
+            rsync -avz --delete ./ /root/paylegend
+            cd /root/paylegend
+            # Adicione outros comandos necessários, como `composer install`, `php artisan migrate`, etc.
