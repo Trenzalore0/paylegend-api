@@ -1,0 +1,54 @@
+framework:
+    messenger:
+        # Uncomment this (and the failed transport below) to send failed messages to this transport for later handling.
+        # failure_transport: failed
+
+        transports:
+            # https://symfony.com/doc/current/messenger.html#transport-configuration
+            # async:
+            #     dsn: '%env(MESSENGER_TRANSPORT_DSN)%'
+            #     options:
+            #         auto_setup: true
+            # failed: 'doctrine://default?queue_name=failed'
+            # sync: 'sync://'
+
+            payin_transport:
+                dsn: '%env(MESSENGER_TRANSPORT_DSN)%'
+                options:
+                    exchange:
+                        name: 'webhook_payin'
+                    queues:
+                        'payin_queue': ~
+                    auto_setup: true
+
+            payout_transport:
+                dsn: '%env(MESSENGER_TRANSPORT_DSN)%'
+                options:
+                    exchange:
+                        name: 'webhook_payout'
+                    queues:
+                        'payout_queue': ~
+                    auto_setup: true
+
+            refund_transport:
+                dsn: '%env(MESSENGER_TRANSPORT_DSN)%'
+                options:
+                    exchange:
+                        name: 'webhook_refund'
+                    queues:
+                        'refund_queue': ~
+                    auto_setup: true
+
+        routing:
+            # Route your messages to the transports
+            'App\Transaction\src\Queue\PayinMessage': payin_transport
+            'App\Transaction\src\Queue\PayoutMessage': payout_transport
+            'App\Transaction\src\Queue\RefundMessage': refund_transport
+
+# when@test:
+#    framework:
+#        messenger:
+#            transports:
+#                # replace with your transport name here (e.g., my_transport: 'in-memory://')
+#                # For more Messenger testing tools, see https://github.com/zenstruck/messenger-test
+#                async: 'in-memory://'

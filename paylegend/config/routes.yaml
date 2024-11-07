@@ -1,0 +1,12 @@
+base_bundle:
+    resource: ../src/Base/src/Controller/
+    type: attribute
+
+partner_bundle:
+    resource: ../src/Partner/src/Controller/
+    type: attribute
+
+transaction_bundle:
+    resource: ../src/Transaction/src/Controller/
+    type: attribute
+

@@ -1,0 +1,24 @@
+name: Deploy to Droplet
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout the code
+      uses: actions/checkout@v3
+
+    - name: Sync files to Droplet
+      uses: burnett01/rsync-deployments@5.1
+      env:
+        DEPLOY_KEY: ${{ secrets.DEPLOY_KEY }}
+        ARGS: "-avz --delete"
+        SERVER_IP: "IP_DA_DROPLET"
+        USERNAME: "root"
+        LOCAL_DIR: "./"
+        REMOTE_DIR: "/var/www/seu-projeto"
