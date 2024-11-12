@@ -9,7 +9,7 @@ use Doctrine\Persistence\ManagerRegistry;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 
 /**
- * @extends ServiceEntityRepository<Role>
+ * @extends ServiceEntityRepository<PartnerUser>
  */
 class PartnerUserRepository extends ServiceEntityRepository
 {

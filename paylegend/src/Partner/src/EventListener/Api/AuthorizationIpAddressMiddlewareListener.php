@@ -27,7 +27,7 @@ class AuthorizationIpAddressMiddlewareListener
          */
         $request = $event->getRequest();
 
-        if (!$this->isAuthorized($request->getClientIp())) {
+        if ($request->attributes->get(self::NAME) && !$this->isAuthorized($request->getClientIp())) {
             throw new AccessDeniedHttpException('Você não tem permissão para acessar esta rota.');
         }
     }
