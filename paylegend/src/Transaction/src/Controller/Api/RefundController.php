@@ -10,7 +10,7 @@ use Symfony\Component\Routing\Attribute\Route;
 use App\Transaction\src\Entity\TransactionEntity;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use App\Base\src\EventListener\Api\AuthorizationMiddlewareListener;
-use App\Transaction\src\Repository\{StatusRepository, OperationRepository};
+use App\Transaction\src\Repository\{StatusRepository, OperationRepository, TransactionRepository};
 
 class RefundController extends AbstractController
 {
@@ -18,10 +18,18 @@ class RefundController extends AbstractController
         private ?EntityManagerInterface $entityManager = null
     ) {}
 
-    #[Route('/refund', name: 'refund', methods: [Request::METHOD_POST], defaults: [AuthorizationMiddlewareListener::NAME => true])]
+    #[Route(
+        path: '/refund',
+        name: 'refund',
+        methods: [Request::METHOD_POST],
+        defaults: [AuthorizationMiddlewareListener::NAME => true]
+    )]
     public function execute(Request $request)
     {
         $jsonContent = json_decode($request->getContent(), true);
+        /**
+         * @var TransactionRepository
+         */
         $transactionRepository = $this->entityManager->getRepository(TransactionEntity::class);
 
         $checkNumber = $transactionRepository->findBy([
@@ -29,66 +37,26 @@ class RefundController extends AbstractController
         ]);
 
         if (!empty($checkNumber)) {
-            return $this->json(['error' => 'order number is used', 't' => $checkNumber]);
+            return $this->json(['error' => 'order number is used']);
         }
 
         $partner = $request->attributes->get('authorized_partner');
 
-        $transactionData = [
-            'tx_id' => $jsonContent['order']['number'],
-            'e2e_id' => 'E2E_' . uniqid(),
-            'operation' => OperationRepository::REFUND,
-            'status' => StatusRepository::PENDING,
-            'partner' => $partner,
-            'number' => $jsonContent['order']['number'],
-            'attributes' => [
-                [
-                    'name' => 'user_uid',
-                    'type' => 'string',
-                    'value' => $jsonContent['user']['uid']
-                ],
-                [
-                    'name' => 'user_document',
-                    'type' => 'string',
-                    'value' => $jsonContent['user']['document']
-                ],
-                [
-                    'name' => 'amount',
-                    'type' => 'double',
-                    'value' => $jsonContent['order']['amount']
-                ],
-                [
-                    'name' => 'group',
-                    'type' => 'int',
-                    'value' => $jsonContent['order']['group']
-                ],
-            ]
-        ];
+        $transactionData = $transactionRepository->getTransactionDataArray(
+            e2eId: 'E2E_' . uniqid(),
+            operation: OperationRepository::REFUND,
+            status: StatusRepository::PENDING,
+            partner: $partner,
+            userUid: $jsonContent['user']['uid'],
+            userDocument: $jsonContent['user']['document'],
+            orderNumber: $jsonContent['order']['number'],
+            orderAmount: $jsonContent['order']['amount'],
+            orderGroup: $jsonContent['order']['group']
+        );
         $transaction = $transactionRepository->createTransaction($transactionData);
         $t = $transactionRepository->getTransactionById($transaction->getId());
 
-        $data = [
-            'transaction' => [
-                'user' => [
-                    'uid' => $t['user_uid'],
-                    'document' => $t['user_document'],
-                ],
-                'order' => [
-                    'number' => $t['number'],
-                    'amount' => $t['amount'],
-                    'group' => $t['group'],
-                    'operation' => $t['operation_id'],
-                    'status' => $t['status_id'],
-                    'created_at' => $t['created_at'],
-                    'updated_at' => $t['updated_at'],
-                ],
-                'pix' => [
-                    'pix_copiacola' => '{ copia e cola full string }',
-                    'pix_qrcode_url' => '{ qrcode\'s url }',
-                    'pix_message' => 'Faça seu PIX utilizando o QRCODE (aponte a câmera do seu celular), ou utilize o código copia e cola.'
-                ]
-            ]
-        ];
+        $data = $transactionRepository->createReponseDataArray($t);
         return $this->json($data);
     }
 }

@@ -20,7 +20,7 @@ class RefundWebhookController extends AbstractController
     ) {}
 
     #[Route(
-        '/refund-webhook',
+        path: '/refund-webhook',
         name: 'refund-webhook',
         methods: [Request::METHOD_POST],
         defaults: [

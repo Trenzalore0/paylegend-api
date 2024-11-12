@@ -6,25 +6,25 @@ namespace App\Balance\src\Entity;
 
 use Doctrine\DBAL\Types\Types;
 use App\Transaction\src\Entity\Operation;
-use App\Balance\src\Repository\FeeRepository;
+use App\Balance\src\Repository\TaxRepository;
 use App\Base\src\Entity\{IdgenerationTrait, TimestampableTrait};
 use App\Partner\src\Entity\Partner;
 use Doctrine\ORM\Mapping\{Entity, Column, ManyToOne, HasLifecycleCallbacks};
 
-#[Entity(repositoryClass: FeeRepository::class)]
+#[Entity(repositoryClass: TaxRepository::class)]
 #[HasLifecycleCallbacks]
-class Fee
+class Tax
 {
     use IdgenerationTrait;
     use TimestampableTrait;
 
-    #[ManyToOne(targetEntity: Partner::class, inversedBy: 'PartnerFee')]
+    #[ManyToOne(targetEntity: Partner::class, inversedBy: 'PartnerTax')]
     private ?Partner $partner = null;
 
-    #[ManyToOne(targetEntity: Operation::class, inversedBy: 'OperationFee')]
+    #[ManyToOne(targetEntity: Operation::class, inversedBy: 'OperationTax')]
     private ?Operation $operation = null;
 
-    #[ManyToOne(targetEntity: Country::class, inversedBy: 'CountryFee')]
+    #[ManyToOne(targetEntity: Country::class, inversedBy: 'CountryTax')]
     private ?Country $country = null;
 
     #[Column(name: 'value', type: Types::DECIMAL, precision: 20, scale: 8)]

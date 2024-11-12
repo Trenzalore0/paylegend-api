@@ -20,7 +20,7 @@ class PayoutWebhookController extends AbstractController
     ) {}
 
     #[Route(
-        '/payout-webhook',
+        path: '/payout-webhook',
         name: 'payout-webhook',
         methods: [Request::METHOD_POST],
         defaults: [

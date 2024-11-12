@@ -4,14 +4,14 @@ declare(strict_types=1);
 
 namespace App\Balance\src\Repository;
 
-use App\Balance\src\Entity\Balance;
+use App\Balance\src\Entity\Tax;
 use Doctrine\Persistence\ManagerRegistry;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 
 /**
- * @extends ServiceEntityRepository<Balance>
+ * @extends ServiceEntityRepository<Tax>
  */
-class BalanceRepository extends ServiceEntityRepository
+class TaxRepository extends ServiceEntityRepository
 {
     /**
      * Construct function
@@ -20,6 +20,6 @@ class BalanceRepository extends ServiceEntityRepository
      */
     public function __construct(ManagerRegistry $registry)
     {
-        parent::__construct($registry, Balance::class);
+        parent::__construct($registry, Tax::class);
     }
 }

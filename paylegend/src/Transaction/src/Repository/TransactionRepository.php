@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Transaction\src\Repository;
 
+use App\Partner\src\Entity\Partner;
 use Doctrine\Persistence\ManagerRegistry;
 use App\Transaction\src\Entity\{Status, Operation};
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
@@ -103,5 +104,78 @@ class TransactionRepository extends ServiceEntityRepository
         $entityManager->flush();
 
         return $transaction;
+    }
+
+    public function getTransactionDataArray(
+        string $e2eId,
+        int $operation,
+        int $status,
+        Partner $partner,
+        int $userUid,
+        string $userDocument,
+        string $orderNumber,
+        float $orderAmount,
+        int $orderGroup
+    ) {
+        return [
+            'tx_id' => $orderNumber,
+            'e2e_id' => $e2eId,
+            'operation' => $operation,
+            'status' => $status,
+            'partner' => $partner,
+            'number' => $orderNumber,
+            'attributes' => [
+                [
+                    'name' => 'user_uid',
+                    'type' => 'string',
+                    'value' => $userUid
+                ],
+                [
+                    'name' => 'user_document',
+                    'type' => 'string',
+                    'value' => $userDocument
+                ],
+                [
+                    'name' => 'amount',
+                    'type' => 'double',
+                    'value' => $orderAmount
+                ],
+                [
+                    'name' => 'group',
+                    'type' => 'int',
+                    'value' => $orderGroup
+                ],
+            ]
+        ];
+    }
+
+    public function createReponseDataArray(array $t, bool $hasPix = false) {
+        $data = [
+            'transaction' => [
+                'user' => [
+                    'uid' => $t['user_uid'],
+                    'document' => $t['user_document'],
+                ],
+                'order' => [
+                    'number' => $t['number'],
+                    'amount' => $t['amount'],
+                    'group' => $t['group'],
+                    'operation' => $t['operation_id'],
+                    'status' => $t['status_id'],
+                    'created_at' => $t['created_at'],
+                    'updated_at' => $t['updated_at'],
+                ],
+            ]
+        ];
+
+        if ($hasPix) {
+            $data['pix'] = [
+                'pix_copiacola' => '{ copia e cola full string }',
+                'pix_qrcode_url' => '{ qrcode\'s url }',
+                'pix_message' => 'Faça seu PIX utilizando o QRCODE (aponte a câmera do seu celular), ou utilize o código copia e cola.'
+            ];
+        }
+
+        return $data;
     }
 }

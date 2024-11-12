@@ -1,10 +1,10 @@
-version: '3.3'
+# version: '3.3'
 
 services:
   # Serviço Backend (Symfony)
   backend:
     build:
-      context: /root/paylegend/paylegend
+      context: ./paylegend
       dockerfile: Dockerfile
     container_name: paylegend-api
     environment:
@@ -20,7 +20,7 @@ services:
     ports:
       - "8000:8000"
     volumes:
-      - /root/paylegend/paylegend:/var/www/html
+      - ./paylegend:/var/www/html
 
   # Serviço Banco de Dados (MariaDB)
   db:
